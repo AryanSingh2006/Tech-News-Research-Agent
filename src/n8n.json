@@ -1,0 +1,1003 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours"
+            }
+          ]
+        }
+      },
+      "id": "e9260b43-8a1e-4c3b-bbaf-7313e01dba5f",
+      "name": "Hourly Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -320,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://techcrunch.com/feed/",
+        "options": {}
+      },
+      "id": "64a2ad91-1be1-453c-b4a7-36881698eda8",
+      "name": "RSS - TechCrunch",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.1,
+      "position": [
+        -112,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://news.ycombinator.com/rss",
+        "options": {}
+      },
+      "id": "6333d045-a8a4-48dc-a3b2-9fa4200b4aa3",
+      "name": "RSS - HackerNews",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.1,
+      "position": [
+        -112,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://www.theverge.com/rss/index.xml",
+        "options": {}
+      },
+      "id": "d54f67ff-fd01-473a-a31b-914f2fc87112",
+      "name": "RSS - The Verge",
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.1,
+      "position": [
+        -112,
+        592
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a1",
+              "name": "source_name",
+              "value": "TechCrunch",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "92954f83-6bd3-4f22-90a3-566e780aed54",
+      "name": "Tag Source - TechCrunch",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        112,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a2",
+              "name": "source_name",
+              "value": "HackerNews",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "5b7b4ecd-7835-4805-b4e9-8b8f07102d54",
+      "name": "Tag Source - HackerNews",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        112,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a3",
+              "name": "source_name",
+              "value": "The Verge",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "ff8e1a60-9a40-40a3-a4d4-9a10e62a280a",
+      "name": "Tag Source - The Verge",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        112,
+        592
+      ]
+    },
+    {
+      "parameters": {
+        "numberInputs": 3
+      },
+      "id": "06cf426d-20c2-48e2-8220-287d491722ff",
+      "name": "Merge All Articles",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.1,
+      "position": [
+        336,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 1
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.title }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            },
+            {
+              "id": "c2",
+              "leftValue": "={{ $json.link }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "cfcb0c41-37b4-4ed7-8e74-3f612f0acee3",
+      "name": "Filter Valid Articles",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        560,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "n1",
+              "name": "title",
+              "value": "={{ $json.title }}",
+              "type": "string"
+            },
+            {
+              "id": "n2",
+              "name": "url",
+              "value": "={{ $json.link }}",
+              "type": "string"
+            },
+            {
+              "id": "n3",
+              "name": "author",
+              "value": "={{ $json.creator || $json.author || 'Unknown' }}",
+              "type": "string"
+            },
+            {
+              "id": "n4",
+              "name": "published_at",
+              "value": "={{ $json.isoDate || $json.pubDate }}",
+              "type": "string"
+            },
+            {
+              "id": "n5",
+              "name": "content",
+              "value": "={{ $json.contentSnippet || $json.content || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "n6",
+              "name": "source_name",
+              "value": "={{ $json.source_name }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "c9007498-59e4-4233-9154-6f38f01c25f0",
+      "name": "Normalize Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        768,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO articles (title, url, source_name, author, published_at, content)\nVALUES ($1, $2, $3, $4, $5, $6)\nON CONFLICT (url) DO NOTHING;",
+        "options": {
+          "queryReplacement": "={{ [$json.title, $json.url, $json.source_name, $json.author, $json.published_at, $json.content] }}"
+        }
+      },
+      "id": "78457a12-f930-43c6-a6df-b25130f2764a",
+      "name": "Insert Article",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        992,
+        352
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "43uhnvbj7n8gbJAp",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "*/30 * * * *"
+            }
+          ]
+        }
+      },
+      "id": "000c643a-eda5-423d-9fdd-9734c47c97d2",
+      "name": "Every 30 Minutes",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        928
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT id, title, source_name, content, url FROM articles WHERE processed = false AND title IS NOT NULL AND content IS NOT NULL AND LENGTH(content) > 100 ORDER BY created_at ASC LIMIT 10;",
+        "options": {}
+      },
+      "id": "0835977d-93a5-4c7c-846b-27c2991bdc36",
+      "name": "Fetch Unprocessed Articles",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        224,
+        928
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "43uhnvbj7n8gbJAp",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "check-has-results",
+              "leftValue": "={{ $input.all().length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "f1d9cfe2-263d-465c-a629-400638da9c54",
+      "name": "Any Articles to Process?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        928
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "ecca7d18-428f-404b-bbc9-c43e6f83c2db",
+      "name": "Nothing to Do",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        672,
+        1088
+      ]
+    },
+    {
+      "parameters": {
+        "batchSize": 5,
+        "options": {
+          "reset": false
+        }
+      },
+      "id": "118c36f5-f682-4587-a4ea-d3c869f0d146",
+      "name": "Batch Articles (5 at a time)",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        672,
+        928
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const item = $input.item.json;\n\nconst title = (item.title || '').trim();\nconst sourceName = item.source_name || 'Unknown';\nconst content = (item.content || '').substring(0, 1500).trim();\n\nconst systemPrompt =  'You are a tech news analyst. Return a JSON object with exactly these three fields: category, summary, importance_score. Category MUST be one of these values only: AI, Startups, Cybersecurity, Cloud, Software Engineering, Mobile, Data Science, Business Tech, Other. Do not invent new categories. Respond ONLY with valid JSON. No markdown. No explanation.';\n\nconst userPrompt = 'Title: ' + title + '\\nSource: ' + sourceName + '\\n\\nContent:\\n' + content + '\\n\\nAnalyze this article.';\n\nreturn {\n  json: {\n    _articleId: item.id,\n    messages: [\n      { role: 'system', content: systemPrompt },\n      { role: 'user', content: userPrompt }\n    ]\n  }\n};"
+      },
+      "id": "b396da14-ffbf-43dd-bb58-b3e71e7bd213",
+      "name": "Build AI Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        880,
+        928
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.groq.com/openai/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: 'llama-3.3-70b-versatile', temperature: 0, max_tokens: 300, response_format: { type: 'json_object' }, messages: $json.messages }) }}",
+        "options": {}
+      },
+      "id": "503c1ef7-deac-43cd-b70f-63c415e627ba",
+      "name": "AI — Analyze Article",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1104,
+        928
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "feJUvqzgxGVsXTsE",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "runOnceForEachItem",
+        "jsCode": "const item = $input.item.json;\n\nconst articleId = $node['Build AI Prompt'].json._articleId;\n\nlet aiResult = {};\n\ntry {\n  const rawContent = item.choices?.[0]?.message?.content || '{}';\n  aiResult = JSON.parse(rawContent);\n} catch (e) {\n  aiResult = { category: 'Other', summary: '', importance_score: 5 };\n}\n\nconst allowedCategories = ['AI', 'Startups', 'Cybersecurity', 'Cloud', 'Software Engineering', 'Mobile', 'Data Science', 'Business Tech', 'Other'];\n\nconst category = allowedCategories.includes(aiResult.category) ? aiResult.category : 'Other';\n\nlet score = parseInt(aiResult.importance_score, 10);\nif (isNaN(score) || score < 1 || score > 10) score = 5;\n\nreturn {\n  json: {\n    id: articleId,\n    category: category,\n    summary: (aiResult.summary || '').trim(),\n    importance_score: score\n  }\n};"
+      },
+      "id": "41b39815-7520-4ef0-955e-9cac18c21241",
+      "name": "Parse AI Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1328,
+        928
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE articles SET category = $1, summary = $2, importance_score = $3, processed = true WHERE id = $4;",
+        "options": {
+          "queryReplacement": "={{ [$json.category, $json.summary, $json.importance_score, $json.id] }}"
+        }
+      },
+      "id": "8246ce74-bce9-4880-ac15-36e429058861",
+      "name": "Update Article in PostgreSQL",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        1552,
+        928
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "43uhnvbj7n8gbJAp",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "8d32f822-6b7d-4462-ac04-eae37d311a59",
+      "name": "Done",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1824,
+        976
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 8 * * *"
+            }
+          ]
+        }
+      },
+      "id": "f298a9f0-f589-4888-baa8-c890f321d14f",
+      "name": "Daily 8AM Trigger",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -368,
+        1488
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT\n  id,\n  title,\n  source_name,\n  category,\n  summary,\n  importance_score,\n  url,\n  published_at\nFROM articles\nWHERE\n  processed = true\n  AND created_at >= NOW() - INTERVAL '24 hours'\n  AND summary IS NOT NULL\n  AND LENGTH(summary) > 20\nORDER BY importance_score DESC\nLIMIT 10;",
+        "options": {}
+      },
+      "id": "2ffd865d-09b5-418f-9f3b-651db39e9e90",
+      "name": "Fetch Top Articles",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [
+        -144,
+        1488
+      ],
+      "credentials": {
+        "postgres": {
+          "id": "43uhnvbj7n8gbJAp",
+          "name": "Postgres account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "check-has-articles",
+              "leftValue": "={{ $input.all().length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "gt"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "c7d1469f-6d05-47a9-9f2b-0f16a462be8f",
+      "name": "Any Articles Today?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        80,
+        1488
+      ]
+    },
+    {
+      "parameters": {},
+      "id": "1456a567-59f4-456d-920f-43e344cb5daa",
+      "name": "No Articles — Stop",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        304,
+        1616
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const articles = $input.all().map(i => i.json);\n\nconst today = new Date().toLocaleDateString('en-US', {\n  weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'\n});\n\nconst articleLines = articles.map((a, idx) =>\n  `${idx + 1}. [Score: ${a.importance_score}/10] [${a.category}] [${a.source_name}]\\nTitle: ${a.title}\\nSummary: ${a.summary}\\nURL: ${a.url}`\n).join('\\n\\n');\n\nconst categories = [...new Set(articles.map(a => a.category))].join(', ');\n\nconst systemPrompt = `You are a senior technology analyst writing a concise, professional daily briefing for a technical audience. Be precise, insightful, and direct. Do not use filler phrases.`;\n\nconst userPrompt = `Today is ${today}. Based on the following top technology news articles from the last 24 hours, write a professional daily technology briefing. Keep the total report under 500 words.\n\nArticles (ranked by importance score):\n${articleLines}\n\nCategories present today: ${categories}\n\nFormat your response EXACTLY as follows (use these exact section headers):\n\n## Executive Summary\n[3-5 sentences covering the most significant developments of the day. Be analytical, not just descriptive.]\n\n## Top Stories\n[Use EXACTLY this format:\n\n- **Headline 1**\n  Analysis sentence(s)\n\n- **Headline 2**\n  Analysis sentence(s)\n\n- **Headline 3**\n  Analysis sentence(s)\n\n- **Headline 4**\n  Analysis sentence(s)\n\n- **Headline 5**\n  Analysis sentence(s)\n\nLeave one blank line between stories.]\n\n## Key Trends\n[Use EXACTLY this format:\n\n- **Trend 1**\n  Explanation sentence(s)\n\n- **Trend 2**\n  Explanation sentence(s)\n\n- **Trend 3**\n  Explanation sentence(s)\n\nLeave one blank line between trends.]\n\n## Categories Covered\n[One sentence summarising which technology areas were most active today and why.]\n\nDo not include any preamble or closing remarks outside these four sections.`;\n\nreturn [\n  {\n    json: {\n      _articleCount: articles.length,\n      _categories: categories,\n      _today: today,\n      _articles: articles,\n      messages: [\n        { role: 'system', content: systemPrompt },\n        { role: 'user', content: userPrompt }\n      ]\n    }\n  }\n];"
+      },
+      "id": "fa627788-4d29-4e88-a684-15455122c721",
+      "name": "Build Report Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        304,
+        1488
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.groq.com/openai/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ model: 'llama-3.3-70b-versatile', temperature: 0.3, max_tokens: 1200, messages: $json.messages }) }}",
+        "options": {}
+      },
+      "id": "d580b25b-77dd-4a57-b09b-61454d8a349e",
+      "name": "Groq — Generate Report",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        528,
+        1488
+      ],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "feJUvqzgxGVsXTsE",
+          "name": "Header Auth account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const groqResponse = $input.first().json;\nconst promptData = $node['Build Report Prompt'].json;\n\nconst rawReport = groqResponse.choices?.[0]?.message?.content || '';\n\nif (!rawReport) {\n  throw new Error('Groq returned an empty response.');\n}\n\nconst today = promptData._today;\nconst articleCount = promptData._articleCount;\nconst categories = promptData._categories;\n\n// ── Discord markdown formatting ──────────────────────────────────────────────\nconst discordReport =\n  `📰 **Tech Daily Briefing — ${today}**\\n` +\n  `*${articleCount} articles analysed across: ${categories}*\\n\\n` +\n  rawReport\n    .replace(/## Executive Summary/g, '**📋 Executive Summary**')\n    .replace(/## Top Stories/g, '**🔥 Top Stories**')\n    .replace(/## Key Trends/g, '**📈 Key Trends**')\n    .replace(/## Categories Covered/g, '**🗂️ Categories Covered**')\n    .trim();\n\n// Discord has a 2000-char limit per message; truncate if needed\nconst discordFinal = discordReport.length > 1950\n  ? discordReport.substring(0, 1947) + '...'\n  : discordReport;\n\n// ── HTML email formatting ────────────────────────────────────────────────────\nconst htmlBody = `<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n<meta charset=\"UTF-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n<title>Tech Daily Briefing — ${today}</title>\n<style>\n  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; background: #f4f6f9; margin: 0; padding: 24px; color: #1a1a2e; }\n  .wrapper { max-width: 640px; margin: 0 auto; }\n  .header { background: #1a1a2e; border-radius: 10px 10px 0 0; padding: 28px 32px; }\n  .header h1 { color: #ffffff; font-size: 22px; font-weight: 600; margin: 0 0 6px; }\n  .header p { color: #a0aec0; font-size: 13px; margin: 0; }\n  .body { background: #ffffff; padding: 32px; }\n  .section { margin-bottom: 28px; }\n  .section h2 { font-size: 15px; font-weight: 600; color: #2d3748; text-transform: uppercase; letter-spacing: 0.06em; border-left: 3px solid #5a67d8; padding-left: 10px; margin: 0 0 14px; }\n  .section p, .section li { font-size: 14px; line-height: 1.7; color: #4a5568; margin: 0 0 10px; }\n  .section ul { padding-left: 20px; margin: 0; }\n  .footer { background: #f4f6f9; border-radius: 0 0 10px 10px; padding: 16px 32px; text-align: center; }\n  .footer p { font-size: 12px; color: #718096; margin: 0; }\n  strong { color: #2d3748; }\n</style>\n</head>\n<body>\n<div class=\"wrapper\">\n  <div class=\"header\">\n    <h1>Tech Daily Briefing</h1>\n    <p>${today} &nbsp;·&nbsp; ${articleCount} articles analysed &nbsp;·&nbsp; ${categories}</p>\n  </div>\n  <div class=\"body\">\n    ${rawReport\n      .replace(/## Executive Summary/g, '<div class=\"section\"><h2>Executive Summary</h2>')\n      .replace(/## Top Stories/g, '</div><div class=\"section\"><h2>Top Stories</h2>')\n      .replace(/## Key Trends/g, '</div><div class=\"section\"><h2>Key Trends</h2>')\n      .replace(/## Categories Covered/g, '</div><div class=\"section\"><h2>Categories Covered</h2>')\n      .replace(/\\*\\*(.+?)\\*\\*/g, '<strong>$1</strong>')\n      .replace(/^- (.+)$/gm, '<li>$1</li>')\n      .replace(/(<li>.*<\\/li>\\n?)+/gs, match => `<ul>${match}</ul>`)\n      .replace(/\\n\\n/g, '</p><p>')\n      .replace(/^(?!<)/gm, '')\n    }\n  </div>\n  </div>\n  <div class=\"footer\">\n    <p>Generated automatically by your Tech News Research Agent</p>\n  </div>\n</div>\n</body>\n</html>`;\n\nreturn [\n  {\n    json: {\n      discord_message: discordFinal,\n      email_subject: `Tech Daily Briefing — ${today}`,\n      email_html: htmlBody,\n      report_date: today,\n      article_count: articleCount\n    }\n  }\n];"
+      },
+      "id": "bb68deb9-3deb-4ddd-93cb-efba8b12cd26",
+      "name": "Format Report",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        752,
+        1488
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://discordapp.com/api/webhooks/1515680113847566426/lF6Z8mfMvBlhaTYoHVIFw6r6lhtp0G8S-eqqIIGinmcDLgQFWJyTfaJl3Ws7Ut70B2eD",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ content: $json.discord_message, username: 'Tech Briefing Bot', avatar_url: 'https://em-content.zobj.net/source/twitter/376/newspaper_1f4f0.png' }) }}",
+        "options": {}
+      },
+      "id": "caa1cdc0-868a-47ae-ae2c-3119b59cd596",
+      "name": "Send to Discord",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        944,
+        1312
+      ]
+    },
+    {
+      "parameters": {
+        "sendTo": "44184amit@gmail.com",
+        "subject": "={{ $json.email_subject }}",
+        "message": "={{ $json.email_html }}",
+        "options": {
+          "senderName": "Tech Briefing Agent"
+        }
+      },
+      "id": "b6bcfde5-7710-42b8-87c1-a3351efcd70c",
+      "name": "Send Gmail Report",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        960,
+        1568
+      ],
+      "webhookId": "b48026c1-cc28-4d23-b565-d981c5ffaf98",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "qky4u5AVeo6kVruU",
+          "name": "Gmail OAuth2 API"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "739b69a6-1f53-4366-80e5-b6fa9c1d9484",
+      "name": "Done1",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1184,
+        1488
+      ]
+    }
+  ],
+  "connections": {
+    "Hourly Trigger": {
+      "main": [
+        [
+          {
+            "node": "RSS - TechCrunch",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "RSS - HackerNews",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "RSS - The Verge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS - TechCrunch": {
+      "main": [
+        [
+          {
+            "node": "Tag Source - TechCrunch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS - HackerNews": {
+      "main": [
+        [
+          {
+            "node": "Tag Source - HackerNews",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS - The Verge": {
+      "main": [
+        [
+          {
+            "node": "Tag Source - The Verge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tag Source - TechCrunch": {
+      "main": [
+        [
+          {
+            "node": "Merge All Articles",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tag Source - HackerNews": {
+      "main": [
+        [
+          {
+            "node": "Merge All Articles",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Tag Source - The Verge": {
+      "main": [
+        [
+          {
+            "node": "Merge All Articles",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Merge All Articles": {
+      "main": [
+        [
+          {
+            "node": "Filter Valid Articles",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Valid Articles": {
+      "main": [
+        [
+          {
+            "node": "Normalize Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Fields": {
+      "main": [
+        [
+          {
+            "node": "Insert Article",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Every 30 Minutes": {
+      "main": [
+        [
+          {
+            "node": "Fetch Unprocessed Articles",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Unprocessed Articles": {
+      "main": [
+        [
+          {
+            "node": "Any Articles to Process?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Any Articles to Process?": {
+      "main": [
+        [
+          {
+            "node": "Batch Articles (5 at a time)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Nothing to Do",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Batch Articles (5 at a time)": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Build AI Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build AI Prompt": {
+      "main": [
+        [
+          {
+            "node": "AI — Analyze Article",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI — Analyze Article": {
+      "main": [
+        [
+          {
+            "node": "Parse AI Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse AI Response": {
+      "main": [
+        [
+          {
+            "node": "Update Article in PostgreSQL",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Article in PostgreSQL": {
+      "main": [
+        [
+          {
+            "node": "Batch Articles (5 at a time)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Done",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Daily 8AM Trigger": {
+      "main": [
+        [
+          {
+            "node": "Fetch Top Articles",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Fetch Top Articles": {
+      "main": [
+        [
+          {
+            "node": "Any Articles Today?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Any Articles Today?": {
+      "main": [
+        [
+          {
+            "node": "Build Report Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Articles — Stop",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Report Prompt": {
+      "main": [
+        [
+          {
+            "node": "Groq — Generate Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq — Generate Report": {
+      "main": [
+        [
+          {
+            "node": "Format Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Report": {
+      "main": [
+        [
+          {
+            "node": "Send to Discord",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send Gmail Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send to Discord": {
+      "main": [
+        [
+          {
+            "node": "Done1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Gmail Report": {
+      "main": [
+        [
+          {
+            "node": "Done1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "9423bfd7b38726089498fd149df5b3f737b3df7a3b0c5f5fe515932a16329cfa"
+  }
+}
