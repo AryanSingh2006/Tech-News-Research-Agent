@@ -611,7 +611,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "https://discordapp.com/api/webhooks/1515680113847566426/lF6Z8mfMvBlhaTYoHVIFw6r6lhtp0G8S-eqqIIGinmcDLgQFWJyTfaJl3Ws7Ut70B2eD",
+        "url": "Discord_webhook_url",
         "sendHeaders": true,
         "headerParameters": {
           "parameters": [
